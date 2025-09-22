@@ -4,12 +4,10 @@ This RFC collects high-level decisions and touchpoints for ShopLite's initial AI
 
 ## AI Touchpoints
 
-- Selected: Typeahead Search and Support Assistant — see the capability map: `docs/ai-first/ai-capability-map.md` for details and rationale.
+- Selected: Product Tagging and Personalized Recs — see the capability map: `docs/ai-first/ai-capability-map.md` for details and rationale.
 
-- Summary: These touchpoints are chosen to increase product discovery conversion and reduce repetitive support contacts while keeping integration risk low (uses SKU catalog and existing `order-status` API).
+- Summary: These touchpoints focus on improving catalog quality and personalized shopping experiences. Product Tagging reduces manual SKU work and improves metadata coverage; Personalized Recs increase engagement and AOV while staying within existing data boundaries (clickstream, SKU catalog).
 
-- Owner & next milestone: Product + Eng (owner: @owner) — Spike (prototype typeahead + mock order-status) by 2025-09-29.
-
-- Acceptance criteria: end-to-end prototype within latency targets (Typeahead p95 ≤300ms, Support p95 ≤1200ms) and cost estimates validated against the `docs/ai-first/cost-model.md`.
+- Acceptance criteria: end-to-end prototype within latency targets (Product Tagging p95 ≤5000ms for near-real-time tagging, Personalized Recs p95 ≤500ms) and cost estimates validated against the `docs/ai-first/cost-model.md`.
 
 - Risks & privacy: See grounding, guardrails, and PII handling in `docs/ai-first/touchpoints.md`.

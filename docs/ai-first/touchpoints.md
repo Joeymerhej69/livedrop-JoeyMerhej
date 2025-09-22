@@ -1,140 +1,119 @@
-## Typeahead Search
+## Product Tagging
 
 **Problem statement**
 
-Shoppers need fast, relevant product suggestions while they type to shorten search-to-purchase time and increase conversion. Current keyword search on ShopLite is adequate but returns many low-relevance results for partial queries and misspellings, increasing time-to-first-click and drop-off during search-heavy sessions.
+Merchandising and catalog teams spend manual effort tagging product attributes (color, material, style, use-case) from images and titles. This limits catalog coverage and slows new SKU onboarding, harming search relevance and personalization.
 
 **Happy path**
 
-1. User focuses the search box and types a partial query (e.g., "blue running").
-2. Frontend sends the current input to the Typeahead service (debounced at 100 ms, only when length >= 2).
-3. Service checks local in-memory cache for the query key; on miss, it performs a fast vector or term-relevance retrieval over indexed SKU titles and aliases.
-4. Service ranks and returns up to 10 suggestions with SKU id, title, thumbnail, and match score.
-5. Frontend displays suggestions; user selects a suggestion or continues typing.
-6. Selection navigates to product page or search results; click is instrumented for conversion attribution.
-
-## Typeahead Search
-
-**Problem statement**
-
-Shoppers need fast, relevant product suggestions while they type to shorten search-to-purchase time and increase conversion. Current keyword search on ShopLite is adequate but returns many low-relevance results for partial queries and misspellings, increasing time-to-first-click and drop-off during search-heavy sessions.
-
-**Happy path**
-
-1. User focuses the search box and types a partial query (e.g., "blue running").
-2. Frontend sends the current input to the Typeahead service (debounced at 100 ms, only when length >= 2).
-3. Service checks local in-memory cache for the query key; on miss, it performs a fast vector or term-relevance retrieval over indexed SKU titles and aliases.
-4. Service ranks and returns up to 10 suggestions with SKU id, title, thumbnail, and match score.
-5. Frontend displays suggestions; user selects a suggestion or continues typing.
-6. Selection navigates to product page or search results; click is instrumented for conversion attribution.
+1. New SKU is uploaded with images and title.
+2. On upload, the Product Tagging service queues the image for processing.
+3. An image model extracts visual features and candidate labels; a small LLM normalizes labels to attribute schema.
+4. The service writes generated attributes to the SKU record (with confidence scores) and flags low-confidence items for human review.
+5. Merch team reviews flagged SKUs in a review UI and accepts/rejects corrections.
+6. Accepted attributes are indexed for search and recommendation pipelines.
 
 **Grounding & guardrails**
 
-- Source of truth: SKU catalog (titles, aliases), historical search logs for query expansions.
-- Retrieval scope this sprint: top 10k SKUs (ShopLite baseline) with precomputed embeddings + title/token index.
-- Max context: only the current query string (<= 64 characters) and optional last-clicked SKU id for personalization (one ID). No free-form doc retrieval.
-- Refuse outside scope: if query contains requests for order/support ("where is my order"), return a routing suggestion to Support Assistant instead.
+- Source of truth: SKU catalog, product images, and title fields.
+- Retrieval scope this sprint: new and updated SKUs only (approx. 200 images/day assumed), attributes limited to a 12-field schema (color, material, style, size hints, gender, category, usage, etc.).
+- Max context: single image + title + existing SKU metadata (<= 1k tokens equivalent) per inference call.
+- Refuse outside scope: do not infer pricing, inventory, or sensitive attributes (e.g., age-restricted categories) — route to human review.
 
 **Human-in-the-loop**
 
-- Escalation triggers: low-confidence matches below a threshold (match score < 0.2) or queries that appear to be support requests.
-- UI surface: a small "Ask support" suggestion in the typeahead dropdown that routes to the Support Assistant.
-- Reviewer & SLA: Search relevance QA by product ops; weekly sampling of low-score queries; reviewer SLA 48 hours for flagged batches.
+- Escalation triggers: low-confidence attribute predictions (confidence < 0.6) or conflicting attributes across images.
+- UI surface: batch review queue for merch with accept/modify/reject actions and quick edit shortcuts.
+- Reviewer & SLA: Merch team reviews flagged items; SLA 24–72 hours depending on priority.
 
-**Latency budget** (p95 target = 300 ms)
+**Latency budget** (p95 target = 5,000 ms for near-real-time tagging)
 
-- Frontend debounce + network: 60 ms
-- Cache read (p95 warm): 10 ms
-- Retrieval + ranking (cold vector/term lookup): 160 ms
+- Image ingestion + queue: 200 ms
+- Image model inference (p95): 2,000 ms
+- LLM normalization + ranking: 1,000 ms
+- Write to catalog + index: 500 ms
+- Review flagging & UI enqueue: 1,300 ms
+- Total p95 budget: 5,000 ms
+
+Cache strategy: cached model warm pools and local batching for thumbnails; no external per-request cache required.
+
+**Error & fallback behavior**
+
+- If model inference fails, set attributes to unknown and send SKU to manual review queue. Log failures with image id and error reason.
+- If normalization fails, retain raw labels and flag for merch verification.
+
+**PII handling**
+
+- What leaves the app: image-derived labels and normalized attribute data (no user PII).
+- Redaction rules: strip any text detected in images that matches PII (emails, phone numbers); do not send full-resolution images to third-party services unless necessary and approved.
+- Logging policy: store processing metadata, confidence scores, and anonymized image hashes; retain detailed images only in secure internal storage with access controls.
+
+**Success metrics**
+
+- Product metric 1 (Catalog coverage): % of SKUs with complete attribute set. Formula: skus_with_full_attributes / total_skus.
+- Product metric 2 (Search relevance improvement): change in search CTR for attribute-filtered queries. Formula: CTR_post / CTR_pre - 1.
+- Business metric (Manual tagging hours saved): estimated merch hours saved per week. Formula: (baseline_hours - post_automation_hours).
+
+**Feasibility note**
+
+Product images and titles exist in ShopLite. Prototype using an off-the-shelf image tagger + small LLM for normalization; next step: run a 1k-image batch to measure label accuracy and reviewer load.
+
+## Personalized Recs
+
+**Problem statement**
+
+Shoppers benefit from personalized product suggestions, but ShopLite currently shows generic carousels that underperform for engagement and repeat purchase. Personalized recommendations can increase AOV and retention if surfaced where users shop.
+
+**Happy path**
+
+1. User visits a product or category page; frontend requests personalized recs.
+2. Service checks for cached recommendations for the user/session; on miss, it retrieves user clickstream and purchase history and recent SKU embeddings.
+3. A ranking model (lightweight scorer) generates top-N personalized SKUs with scores.
+4. Service returns ranked recommendations with SKU ids, thumbnails, and reasons (optional short text).
+5. Frontend displays recs in an inline carousel; user clicks through or adds to cart.
+6. Clicks and conversions are recorded and fed back to update models and caches.
+
+**Grounding & guardrails**
+
+- Source of truth: clickstream events, SKU embeddings, and purchase history (aggregated).
+- Retrieval scope this sprint: last 90 days of anonymized sessions and precomputed SKU embeddings for 10k SKUs.
+- Max context: aggregated feature vectors + up to 1k tokens of session summary for contextual signals.
+- Refuse outside scope: do not use raw user messages or sensitive profile fields; refuse to recommend age-restricted items without a verified flag.
+
+**Human-in-the-loop**
+
+- Escalation triggers: model drift detection, sudden drops in CTR, or biased recommendations flagged by QA.
+- UI surface: internal dashboard for QA to mark poor recommendations; manual overrides for curated slots.
+- Reviewer & SLA: Data Science and Merch review weekly; critical issues triaged within 24 hours.
+
+**Latency budget** (p95 target = 500 ms)
+
+- Frontend request + network: 60 ms
+- Cache read (p95 warm): 30 ms
+- Retrieval of user/session features + embeddings: 140 ms
+- Ranking model inference: 200 ms
 - Response serialization + network: 70 ms
-- Total p95 budget: 300 ms
+- Total p95 budget: 500 ms
 
-Cache strategy: 70% expected cache hit for popular prefixes using an LRU in-memory cache populated from recent queries and precomputed top suggestions.
-
-**Error & fallback behavior**
-
-- If retrieval fails or times out (> 250 ms for backend), fall back to the existing keyword search endpoint and show generic "Best sellers" suggestions.
-- Log the query and error with non-PII context for debugging; do not block the UI.
-
-**PII handling**
-
-- What leaves the app: the raw query string is sent to the Typeahead service; queries are retained for analytics but masked for PII.
-- Redaction rules: detect and redact tokens that match email, phone, or order-id patterns before logging or sending to third-party services. If query matches an order-id pattern, route to Support Assistant instead of sending to search index.
-- Logging policy: store hashes of raw queries (SHA-256) for analytics, store redacted plaintext for UX debugging only, and keep retention to 30 days. No user identifiers with query text in logs.
-
-**Success metrics**
-
-- Product metric 1 (Time-to-first-click): median seconds from focus to first suggestion click. Formula: median(click_time - focus_time).
-- Product metric 2 (Search conversion lift): conversion rate for sessions using typeahead vs baseline. Formula: orders_from_sessions_with_typeahead / sessions_with_typeahead.
-- Business metric (Revenue per search session): total revenue from sessions started by search / number of search sessions.
-
-**Feasibility note**
-
-SKU titles and historical search logs exist in ShopLite; embeddings can be precomputed for 10k SKUs using any small embedding model or term index. Next prototype step: build a minimal service that serves cached top suggestions for 100 popular prefixes and measure end-to-end latency in staging.
-
-## Support Assistant
-
-**Problem statement**
-
-Customer support receives high-volume, repeatable questions about order status, returns, and policies that increase human agent load and response time. Shoppers expect instant answers for order lookups and policy clarifications; automating these reduces support contact rate and operational cost while improving response time.
-
-**Happy path**
-
-1. User opens the support widget and types "Where's my order #12345?" or selects an FAQ question.
-2. Frontend authenticates user session and optionally attaches order id from URL or user account.
-3. Support Assistant checks intent and extracts the referenced order id.
-4. Assistant retrieves grounding documents: policies markdown and `order-status` API by id for the referenced order.
-5. Assistant composes a concise answer with order status, expected delivery, and next steps; shows the cited sources (policy paragraph and order id) in the UI.
-6. If the assistant is confident, it returns the answer; user marks the issue resolved or clicks "contact agent".
-
-**Grounding & guardrails**
-
-- Source of truth: `docs/policies/*` markdown files (FAQ) and the `order-status` API (by order id).
-- Retrieval scope this sprint: the policies markdown and order-status API only; do not retrieve user messages or other DB tables.
-- Max context: 4k tokens (policy excerpts + order JSON). Responses must cite the policy filename and order id.
-- Refuse outside scope: for account changes, refunds not available via API, or transactional disputes, the assistant should refuse and route to human agent.
-
-**Human-in-the-loop**
-
-- Escalation triggers: low-confidence answers (LLM confidence < 0.7), ambiguous order ids, or requests for refunds/chargebacks.
-- UI surface: "Escalate to agent" button and a pre-filled transcript with user query + assistant draft answer for quick agent takeover.
-- Reviewer & SLA: Support lead reviews escalation queue; SLA 4 hours for customer-visible responses during business hours.
-
-**Latency budget** (p95 target = 1200 ms)
-
-- Frontend auth + network: 120 ms
-- Retrieval of policy & order API: 300 ms (includes network to internal API)
-- RAG assembly + LLM call (p95): 600 ms
-- Response rendering + network: 180 ms
-- Total p95 budget: 1,200 ms
-
-Cache strategy: cache recent order-status responses for 30 seconds and policy excerpts in-memory with TTL 24 hours. Expect ~30% cache hit rate.
+Cache strategy: per-user/session ephemeral cache with TTL 5 minutes and global popular lists cached for 24 hours. Expect ~60% cache hit on product pages.
 
 **Error & fallback behavior**
 
-- If an order lookup fails (API error or order not found), provide a clear message with next steps ("We couldn't find that order; check the number or contact support") and present "Contact agent" action.
-- If LLM times out or returns low-confidence output, show a safe canned response and surface the option to contact an agent. Log the event for review.
+- On retrieval or ranking failure, fall back to a generic "You may also like" best-sellers carousel and surface a small banner "Can't personalize right now".
+- Log failures and sample inputs for debugging; do not expose internal model errors to users.
 
 **PII handling**
 
-- What leaves the app: order id (when present) and redacted user query may be sent to the LLM provider for generation when necessary.
-- Redaction rules: redact payment card numbers, full addresses, and personally identifiable contact info before sending to third-party LLMs. Include only order id and last 4 digits when needed.
-- Logging policy: log events with order id hashed, assistant confidence score, and redacted transcript. Store detailed transcripts only in an internal secure store with restricted access and 90-day retention.
+- What leaves the app: anonymous user/session id and aggregated features; no raw PII or full purchase history sent to third-party models.
+- Redaction rules: remove or hash any identifiers; do not include email, full addresses, or payment data in model inputs.
+- Logging policy: store recommendation requests with hashed user ids and feature fingerprints; retain raw session data in secure analytics for 90 days.
 
 **Success metrics**
 
-- Product metric 1 (First contact resolution rate with assistant): percentage of support widget sessions resolved without agent handoff. Formula: resolved_by_assistant / total_assistant_sessions.
-- Product metric 2 (Median response time): median time from user message to assistant reply. Formula: median(reply_time - message_time).
-- Business metric (Support contacts avoided): reduction in agent-handled tickets per day. Formula: (baseline_agent_tickets - agent_tickets_after_assistant).
+- Product metric 1 (Rec CTR): clicks on recommended items / impressions. Formula: rec_clicks / rec_impressions.
+- Product metric 2 (AOV lift for sessions with recs): avg_order_value_with_recs / avg_order_value_without_recs - 1.
+- Business metric (Incremental revenue from recs): revenue_from_rec_sessions - baseline_revenue.
 
 **Feasibility note**
 
-Policies markdown exists in the repo and ShopLite exposes an `order-status` API by id. Use a retrieval-augmented approach with short policy excerpts and the order JSON as grounding. Next prototype step: wire a mock `order-status` endpoint and test a small LLM prompt that returns status + citation within the latency budget.
-
----
-
-**Estimated cost per action (assumptions)**
-
-- Pricing examples used: `GPT-4o-mini` ($0.15/1K prompt, $0.60/1K completion) and `Llama 3.1 8B Instruct` via OpenRouter ($0.05/1K prompt, $0.20/1K completion).
-- Typeahead: typical request uses a small prompt (32 tokens) + small completion (32 tokens) for ranking/rewriting. Estimated cost per request: ~0.000032 _ prompt_price + 0.000032 _ completion_price ≈ $0.000019 (Llama) — effectively negligible; with 50k requests/day and 70% cache hit, incremental model calls ~15k/day -> ~$0.3/day using Llama pricing.
-- Support Assistant: typical RAG prompt ~400 tokens + completion ~200 tokens. Using `GPT-4o-mini` cost estimate: (0.4 _ $0.15) + (0.2 _ $0.60) = $0.06 + $0.12 = $0.18 per full call. With 1,000 requests/day and 30% cache hit -> ~700 model calls/day ≈ $126/day. Using Llama pricing would be ~ (0.4*$0.05)+(0.2*$0.20) = $0.02+$0.04 = $0.06/call -> $42/day.
+Clickstream and SKU embeddings are available; prototype with a lightweight retrieval+ranking pipeline using precomputed embeddings and a small scorer. Next step: A/B test homepage and product page slots with cached personalized lists.

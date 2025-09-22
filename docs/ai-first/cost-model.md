@@ -1,53 +1,49 @@
 ## Assumptions
 
-- Model (primary): Llama 3.1 8B Instruct via OpenRouter at $0.05/1K prompt tokens, $0.20/1K completion tokens
-- Comparison model: GPT-4o-mini at $0.15/1K prompt tokens, $0.60/1K completion tokens
-- Typeahead avg tokens in: 32  Avg tokens out: 32
-- Support Assistant avg tokens in: 400  Avg tokens out: 200
-- Requests/day (defaults): Typeahead 50,000  Support Assistant 1,000
-- Cache hit rate: Typeahead 70% (apply miss cost only), Support Assistant 30% cache hit
+- Model (text): Llama 3.1 8B Instruct via OpenRouter at $0.05/1K prompt tokens, $0.20/1K completion tokens
+- Image inference cost (vision model): approx $0.01 per image processed (batch pricing estimate)
+- Personalized ranking scorer (lightweight) costs similar to a small model call: assume 50 in tokens in + 50 out equivalent
+- Product Tagging avg: 1 image processed + 100 tokens of LLM normalization
+- Personalized Recs avg: 100 tokens in (features) + 50 tokens out (ranking/metadata)
+- Requests/day (defaults): Product Tagging 200 images/day (new SKUs) Personalized Recs 20,000 pageviews/day
+- Cache hit rate: Product Tagging: N/A (one-time on upload); Personalized Recs cache hit 60%
 
 ## Calculation
 
-Cost/action = (tokens_in/1000 * prompt_price) + (tokens_out/1000 * completion_price)
-Daily cost = Cost/action * Requests/day * (1 - cache_hit_rate)
+Cost/action (text) = (tokens*in/1000 * prompt*price) + (tokens_out/1000 * completion*price)
+Cost/image = image_inference_cost (when applicable)
+Daily cost = Cost/action * Requests/day \_ (1 - cache_hit_rate) + Cost_image \* images_processed
 
-### Llama 3.1 8B (primary)
+### Product Tagging (Llama + image model)
 
-- Typeahead:
+- Image cost per SKU = $0.01 (vision model) \* 1 image = $0.01
+- LLM normalization cost = (100/1000 _ $0.05) + (0/1000 _ $0.20) = $0.005
+- Cost/action (per new SKU) = $0.01 + $0.005 = $0.015
+- Daily volume = 200 new SKUs/day -> Daily cost = $0.015 \* 200 = $3.00
 
-  - Cost/action = (32/1000 * $0.05) + (32/1000 * $0.20) = $0.0016 + $0.0064 = $0.0080
-  - Effective daily calls (misses) = 50,000 * (1 - 0.70) = 15,000
-  - Daily cost = $0.0080 * 15,000 = $120.00
+### Personalized Recs (Llama)
 
-- Support Assistant:
-  - Cost/action = (400/1000 * $0.05) + (200/1000 * $0.20) = $0.02 + $0.04 = $0.06
-  - Effective daily calls (misses) = 1,000 * (1 - 0.30) = 700
-  - Daily cost = $0.06 * 700 = $42.00
+- Cost/action = (100/1000 _ $0.05) + (50/1000 _ $0.20) = $0.005 + $0.01 = $0.015
+- Effective daily calls (misses) = 20,000 \* (1 - 0.60) = 8,000
+- Daily cost = $0.015 \* 8,000 = $120.00
 
-### GPT-4o-mini (comparison)
+### Comparison with GPT-4o-mini
 
-- Typeahead:
-
-  - Cost/action = (32/1000 * $0.15) + (32/1000 * $0.60) = $0.0048 + $0.0192 = $0.0240
-  - Daily cost (misses) = $0.0240 * 15,000 = $360.00
-
-- Support Assistant:
-  - Cost/action = (400/1000 * $0.15) + (200/1000 * $0.60) = $0.06 + $0.12 = $0.18
-  - Daily cost (misses) = $0.18 * 700 = $126.00
+- Product Tagging (GPT-4o-mini LLM portion): (100/1000 \* $0.15) = $0.015 per normalization + $0.01 image = $0.025 per SKU -> 200/day = $5.00/day
+- Personalized Recs (GPT-4o-mini): (100/1000 _ $0.15) + (50/1000 _ $0.60) = $0.015 + $0.03 = $0.045 per call -> 8,000 misses/day = $360/day
 
 ## Results
 
-- Support Assistant (Llama): Cost/action = $0.06, Daily = $42.00
-- Typeahead (Llama): Cost/action = $0.0080, Daily = $120.00
+- Product Tagging (Llama): Cost/action = $0.015, Daily = $3.00
+- Personalized Recs (Llama): Cost/action = $0.015, Daily = $120.00
 
-Comparison with GPT-4o-mini:
+Comparison (GPT-4o-mini):
 
-- Support Assistant (GPT-4o-mini): Cost/action = $0.18, Daily = $126.00
-- Typeahead (GPT-4o-mini): Cost/action = $0.0240, Daily = $360.00
+- Product Tagging: $0.025/action, Daily = $5.00
+- Personalized Recs: $0.045/action, Daily = $360.00
 
 ## Cost lever if over budget
 
-- Shorten RAG context for Support Assistant to reduce token_in (e.g., trim policy excerpts to 200 tokens).
-- Increase cache TTLs or precompute top suggestions to raise typeahead hit rate from 70% to 85%.
-- Use Llama 3.1 for high-volume paths and route sensitive/complex requests to GPT-4o-mini.
+- Increase personalization cache hit rate (longer TTLs, precompute popular segments).
+- Batch image processing for tagging during low-cost windows to reduce per-image inference cost.
+- Use Llama for high-volume ranking and reserve GPT-4o-mini for complex, high-value re-ranks.
