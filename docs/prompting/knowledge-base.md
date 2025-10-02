@@ -181,104 +181,120 @@ for returns and refunds while allowing sellers to manage exceptions responsibly.
 
 ## Document 11: Shoplite Vendor Onboarding Program
 
-Shoplite users can enhance account security by enabling two-factor authentication (2FA).
-2FA can be activated from the account settings page, where users select their preferred verification
-method. Options include SMS-based one-time codes or authentication apps that generate time-based codes.
-After setup, every login requires the user to provide both their password and the second factor, ensuring
-protection even if the password is compromised. Recovery methods, such as backup codes, are also
-provided to prevent account lockout. Enabling 2FA strengthens account security, safeguards buyer
-information, and reduces the risk of unauthorized access to sensitive seller and buyer data.
+Shoplite allows users to enhance account security by enabling two-factor authentication (2FA), providing an additional layer of protection beyond standard password credentials. Users can activate 2FA from the account settings page, where they are guided through the setup process and select their preferred verification method. Available options include SMS-based one-time codes, which are sent to the user’s registered phone number, or authentication apps that generate time-based codes for secure, offline verification.
+
+Once 2FA is enabled, every login requires users to provide both their password and the secondary verification factor. This dual-layer authentication ensures that even if a password is compromised, unauthorized access is prevented, protecting sensitive information such as personal data, payment details, and order history. The system reinforces account integrity for both buyers and sellers, mitigating risks associated with phishing attacks, credential theft, or other forms of unauthorized access.
+
+Shoplite also provides recovery mechanisms to prevent account lockout in the event a user loses access to their second factor. Backup codes and recovery instructions allow users to regain access safely while maintaining the security of their account. These recovery options are designed to balance convenience with strong security measures, ensuring that users are never locked out while keeping accounts protected.
+
+By offering 2FA, Shoplite strengthens overall platform security and builds user confidence in the marketplace. Enabling this feature helps safeguard buyer information, protects seller accounts, and reduces the likelihood of fraudulent transactions or unauthorized changes to account data. Through a combination of user-friendly setup, reliable verification options, and secure recovery mechanisms, Shoplite ensures that accounts remain protected without compromising usability or accessibility.
 
 ---
 
 ## Document 12: Shoplite Customer Support System
 
-Shoplite provides sellers with flexible shipping configuration options. Sellers can
-define zone-based rates depending on geographic regions, set flat rates for specific shipping methods,
-or integrate calculated carrier rates using real-time logistics APIs. Both merchant-fulfilled and
-third-party logistics (3PL) options are supported, allowing sellers to select their preferred fulfillment
-strategy. These configurations ensure accurate cost calculation, delivery estimation, and compatibility
-with Shoplite’s order tracking system. Sellers are encouraged to maintain consistency and transparency
-in shipping policies to reduce disputes and enhance buyer satisfaction.
+Shoplite provides sellers with comprehensive and flexible shipping configuration options, enabling precise control over how products are delivered to buyers. Sellers can define zone-based shipping rates tailored to different geographic regions, establish flat rates for specific shipping methods, or integrate dynamic carrier-calculated rates through real-time logistics APIs. This flexibility ensures that shipping costs are accurately calculated, reflecting both regional variations and the chosen delivery method.
+
+The platform supports multiple fulfillment strategies, including merchant-fulfilled shipments and third-party logistics (3PL) providers. Sellers can select the approach that best fits their operational capabilities, whether managing fulfillment internally or outsourcing to specialized logistics partners. By accommodating a variety of shipping workflows, Shoplite allows sellers to optimize delivery speed, cost, and reliability while maintaining consistency across orders.
+
+Accurate shipping configuration also ties directly into Shoplite’s order tracking system. Delivery estimates, tracking updates, and notifications are automatically generated based on the configured shipping rules, keeping buyers informed throughout the fulfillment process. This transparency minimizes confusion, reduces the likelihood of disputes, and strengthens buyer confidence in the marketplace.
+
+Sellers are encouraged to maintain clear and consistent shipping policies, including specifying processing times, handling fees, and regional restrictions. Well-defined configurations help manage buyer expectations, improve satisfaction, and prevent delays or misunderstandings.
 
 ---
 
 ## Document 13: Shoplite Fraud Detection and Security
 
-Shoplite enforces review moderation to maintain credibility. Automated filters scan all
-submissions for spam, offensive content, or suspicious patterns. Flagged reviews are escalated for
-manual review by trained moderators. Verified purchase badges are applied to reviews from customers
-who have completed a genuine transaction. This system ensures authenticity, prevents abuse, and
-maintains trust for both buyers and sellers. Sellers are notified when reviews are removed or
-flagged, providing transparency and feedback on product perception.
+Shoplite enforces a structured review moderation system to protect marketplace credibility and ensure that feedback remains authentic, relevant, and trustworthy. All customer review submissions pass through automated filters that scan for spam, offensive language, and suspicious patterns such as repetitive posting or artificially generated content. These filters serve as the first line of defense, allowing the platform to detect and block low-quality or potentially harmful reviews before they are published.
 
----
+When a review is flagged by the automated system, it is escalated for manual review by trained moderators. This human oversight provides an additional safeguard to ensure accuracy in the moderation process. Moderators assess whether the content violates Shoplite’s community standards, review guidelines, or platform policies. Reviews found to be inappropriate, fraudulent, or manipulative are either removed or restricted from public visibility.
+
+To strengthen authenticity, Shoplite applies a “Verified Purchase” badge to reviews submitted by customers who have completed a genuine transaction on the platform. This distinction helps buyers identify credible feedback and reduces the influence of fake or misleading reviews. By prioritizing verified reviews, the system enhances transparency and encourages trust in product evaluations.
+
+## Sellers are notified when reviews related to their products are removed, flagged, or moderated. This communication provides transparency and valuable feedback on how products are being perceived. Sellers gain insight into customer sentiment while also understanding the reasons behind moderation actions.
 
 ## Document 14: Shoplite Mobile App Features
 
-hoplite supports multiple locales and currencies to serve international buyers and
-sellers. Content such as product descriptions, currency symbols, and interface text is localized
-for major markets. Sellers can configure listings with country-specific prices, shipping rules,
-and translated content. Buyers experience a seamless interface in their preferred language and
-currency, while sellers maintain consistent product management globally. Localization improves
-conversion rates, accessibility, and overall marketplace usability.
+Shoplite supports multiple locales and currencies to enable seamless participation from international buyers and sellers. The platform is designed to adapt content dynamically for global markets, ensuring that users experience an interface that aligns with their preferred language, regional conventions, and currency standards. Product descriptions, interface text, and currency symbols are localized to major markets, reducing friction and making the marketplace accessible to a broader audience.
 
----
+For sellers, localization provides flexibility in configuring listings. They can set country-specific prices, define shipping rules tailored to different regions, and upload translated product content. This allows sellers to maintain a unified catalog while still accommodating the unique expectations of buyers across multiple markets. Sellers benefit from centralized product management tools, which ensure consistency in their offerings, while still providing the ability to target international buyers with localized detail.
+
+Buyers, in turn, experience a seamless shopping journey in their preferred language and currency. Pricing is automatically displayed with appropriate symbols and formatting, eliminating the need for manual conversions or guesswork. Localized product descriptions and interface elements increase clarity, foster trust, and improve the overall user experience. This reduces barriers to purchase, enhances accessibility, and ultimately improves conversion rates for sellers.
+
+## Beyond usability, Shoplite’s localization framework strengthens marketplace integrity by ensuring compliance with local standards and expectations. By adapting its interface and content to the cultural and economic context of each market, Shoplite provides a platform that feels both global and locally relevant.
 
 ## Document 15: Shoplite Advertising Solutions
 
-Shoplite maintains audit logs for all administrative actions, including user management,
-payment adjustments, and content changes. By default, logs are retained for 90 days, though legal
-requirements may mandate longer retention in certain jurisdictions. Audit logs capture timestamps,
-user IDs, and action details, providing accountability, traceability, and support for dispute resolution.
-Administrators and security teams can review logs for compliance, operational oversight, and forensic
-investigations.
+Shoplite maintains comprehensive audit logs to ensure accountability and traceability across the platform. These logs capture detailed records of all administrative actions, including user management tasks, payment adjustments, and content modifications. Every action is stored with a timestamp, user identifier, and description of the event, creating a transparent history of changes that supports oversight and security.
 
----
+By default, audit logs are retained for 90 days. However, Shoplite acknowledges that in certain jurisdictions or under specific legal requirements, longer retention periods may be mandated. In such cases, log storage policies are extended to meet compliance obligations while preserving the integrity of recorded data. This flexibility allows Shoplite to align with global regulatory frameworks and maintain adherence to industry best practices.
+
+Audit logs serve multiple operational and security purposes. For administrators, they provide a reliable record of system changes and policy enforcement, enabling effective operational oversight. Security teams rely on the logs for proactive monitoring, forensic investigations, and incident response, ensuring that any unauthorized or suspicious activities can be quickly detected and analyzed.
+
+The presence of audit logs also supports dispute resolution. In cases where actions are contested—such as account modifications, payment changes, or policy enforcement—logs provide verifiable evidence of what occurred and when. This transparency reduces uncertainty, strengthens accountability, and protects both platform operators and users from unjust claims.
+
+## By combining structured recordkeeping with secure retention practices, Shoplite ensures that audit logs contribute to compliance, operational resilience, and trust across the marketplace. The system balances regulatory requirements with business needs, offering a robust tool for oversight while safeguarding the integrity of administrative processes.
 
 ## Document 16: Shoplite Loyalty and Rewards Program
 
-Shoplite provides tools to manage chargebacks effectively. When a buyer disputes a
-transaction, sellers can collect evidence such as invoices, shipment tracking, and communications
-to support their case. Shoplite mediates disputes and may hold funds until resolution is achieved.
-Chargeback management ensures fair handling of contested payments, protects sellers from unjust
-loss, and maintains overall marketplace integrity.
+Shoplite provides structured tools and processes to manage chargebacks, ensuring that disputed transactions are handled fairly and efficiently. A chargeback occurs when a buyer contests a payment through their financial institution, often claiming issues such as non-receipt of goods, defective products, or unauthorized charges. To address these disputes, Shoplite equips sellers with the ability to gather and submit evidence directly through the platform. This evidence may include order invoices, shipment tracking information, delivery confirmations, and relevant buyer communications that demonstrate the legitimacy of the transaction.
+
+Once a chargeback is initiated, Shoplite mediates the dispute between the buyer, the seller, and the payment processor. During this period, funds associated with the contested transaction may be temporarily placed on hold to ensure neutrality until the case is resolved. This prevents premature financial loss for one party while maintaining fairness for both sides. The mediation process is designed to be transparent and structured, providing clear timelines and requirements for evidence submission.
+
+For sellers, effective chargeback management is critical to protecting revenue and maintaining trust in the platform. By offering a clear path to defend against unjust claims, Shoplite reduces the risk of fraudulent or unfounded disputes resulting in financial losses. For buyers, the process reinforces confidence that legitimate concerns will be taken seriously and addressed appropriately.
+
+Beyond individual cases, chargeback management contributes to overall marketplace integrity. By balancing protections for both buyers and sellers, Shoplite ensures that contested payments are resolved fairly, discouraging abuse while fostering accountability. The system encourages responsible transactions, reduces disputes, and strengthens trust across the ecosystem.
 
 ---
 
 ## Document 17: Shoplite Analytics and Reporting
 
-Shoplite enforces coupon stacking and exclusion rules at checkout. Merchants define
-how multiple promotional codes can be applied, and the system validates these rules automatically.
-This prevents misuse, ensures correct discount calculation, and allows sellers to maintain desired
-pricing strategies. Coupon stacking rules provide flexibility while preserving platform integrity
-and buyer confidence.
+Shoplite enforces strict coupon stacking and exclusion rules during the checkout process to ensure discounts are applied fairly and in accordance with merchant policies. Merchants have the flexibility to define how multiple promotional codes can be combined, whether they can be stacked together, or if certain discounts should be applied exclusively. Once these rules are configured, the platform automatically validates them in real time whenever a customer attempts to apply one or more coupons to their purchase.
+
+This automated validation plays a critical role in maintaining pricing accuracy. By preventing unauthorized stacking or conflicting discounts, Shoplite ensures that promotions are applied correctly and that sellers retain control over their intended pricing strategies. For example, a merchant may allow a seasonal discount to be combined with free shipping but restrict its use alongside a high-value promotional code. Shoplite enforces these conditions consistently, eliminating ambiguity at checkout and reducing the risk of revenue loss.
+
+In addition to protecting merchants, these rules safeguard buyer confidence by ensuring transparency in how discounts are applied. Customers see clear messaging about which coupons are valid, which cannot be combined, and why certain codes may be rejected. This clarity minimizes frustration, sets accurate expectations, and prevents disputes related to pricing or promotions.
+
+The flexibility of coupon stacking rules also supports diverse promotional strategies. Sellers can encourage sales with targeted combinations of discounts while still preserving profit margins and preventing misuse. By balancing merchant flexibility with system safeguards, Shoplite strengthens the integrity of its marketplace and delivers a consistent, trustworthy checkout experience.
+
+Through its structured enforcement of coupon stacking and exclusion policies, Shoplite enables sellers to design effective promotions while ensuring fairness, accuracy, and transparency for buyers. This system protects both sides of the marketplace and reinforces trust in Shoplite’s commerce ecosystem.
 
 ---
 
 ## Document 18: Shoplite API Integration
 
-If an order is delayed by a carrier, Shoplite triggers support workflows to manage the
-exception. Customers can request updates or refunds depending on the seller’s policy. Real-time
-tracking and notifications inform both buyers and sellers about status changes. This structured
-response ensures transparency, minimizes frustration, and maintains buyer trust in the marketplace.
+Shoplite has structured processes in place to handle order delays caused by carriers. When a delay is detected, the system automatically triggers support workflows designed to manage exceptions efficiently. These workflows ensure that both buyers and sellers are kept informed and that issues are resolved in a timely and transparent manner.
+
+Customers experiencing a delay have access to support options directly through the platform. Depending on the seller’s policies, they may request status updates, file inquiries, or initiate refund requests. By centralizing these options, Shoplite reduces confusion and gives customers clear, actionable choices when a delivery does not proceed as expected.
+
+Real-time tracking forms a core part of the delay management system. Shoplite continuously updates order status information, notifying buyers and sellers whenever there is a change. These updates allow customers to monitor the progress of their shipment and provide sellers with visibility into potential delivery issues. Proactive notifications not only keep all parties informed but also help prevent unnecessary disputes.
+
+Transparency and responsiveness are central to maintaining trust in the marketplace. By structuring its response to delays, Shoplite minimizes customer frustration and reassures buyers that their concerns are being addressed. At the same time, sellers benefit from streamlined communication channels that reduce the burden on their own support operations.
+
+In the event that delays escalate, Shoplite’s system ensures that any refunds or compensations are processed according to policy, balancing fairness for buyers while respecting seller terms. This structured approach safeguards marketplace reliability, reinforces accountability, and supports long-term trust between all participants.
 
 ---
 
 ## Document 19: Shoplite Compliance and Legal Policies
 
-Shoplite Compliance and Legal Policies",
-"content": """Developers can obtain API keys by registering an account and requesting access
-through the developer portal. Keys must be stored securely and are associated with rate limits
-and permissions. API keys enable programmatic access to inventory, orders, and payments.
-Proper management ensures integration security and platform compliance.
+Shoplite enforces strict compliance and legal policies to ensure secure and responsible use of its platform. A central part of these policies is the management of API keys, which act as secure credentials for developers integrating with Shoplite services. To obtain an API key, developers must create an account and request access through the Shoplite Developer Portal. Each key is uniquely issued and linked to specific permissions, scopes, and rate limits, ensuring that developers only access the resources they are authorized to use.
+
+API keys provide programmatic access to critical platform features, including inventory management, order processing, and payments. Because of the sensitivity of these operations, Shoplite requires that keys be stored securely and never exposed in public repositories, client-side applications, or other unsecured environments. Developers are responsible for rotating keys periodically, revoking unused or compromised keys, and treating them with the same level of caution as other confidential credentials.
+
+All activity conducted with an API key is logged and monitored by Shoplite. This monitoring enforces rate limits, detects unusual usage patterns, and ensures compliance with platform policies. By linking actions directly to specific keys, Shoplite maintains accountability and supports adherence to data protection regulations and industry standards for online commerce. In cases where keys are misused, shared, or exploited, Shoplite reserves the right to suspend or revoke access immediately.
+
+Compliance extends beyond technical requirements to legal obligations as well. Developers must follow Shoplite’s Terms of Service and data protection policies, ensuring that integrations remain secure and aligned with regulatory frameworks. Failure to comply can result in restricted access, termination of integrations, or further legal consequences.
 
 ---
 
 ## Document 20: Shoplite Future Roadmap
 
-Shoplite uses a combination of rule-based checks and machine-learning risk scoring
-to prevent fraudulent transactions. These systems integrate with external identity sources and
-monitor patterns in purchasing, payment, and account activity. Alerts, holds, and additional
-verification steps are applied based on risk assessments, ensuring that both buyers and sellers
-are protected from fraud while maintaining smooth marketplace operations.
+Shoplite employs a layered approach to fraud prevention that combines both traditional rule-based checks and advanced machine-learning risk scoring. This dual strategy ensures that suspicious activities are flagged quickly and accurately, minimizing the risk of fraudulent transactions while maintaining trust and confidence across the platform.
+
+The rule-based system relies on predefined conditions and thresholds to catch obvious red flags. For instance, it can detect repeated failed login attempts, unusually high purchase amounts, or mismatched billing and shipping addresses. These straightforward checks provide an initial layer of defense, filtering out clear risks before they can impact the system.
+
+Beyond that, Shoplite integrates machine-learning models that continuously analyze vast amounts of behavioral and transactional data. These models identify subtle patterns that may indicate fraudulent activity, such as unusual purchase frequencies, location inconsistencies, or deviations from a customer’s typical spending behavior. Because the models learn and adapt over time, they become more effective at spotting new or evolving fraud tactics that static rules alone may miss.
+
+Shoplite also enhances its fraud prevention capabilities by connecting with external identity and verification sources. This integration provides additional confirmation of user authenticity, further reducing the chances of account takeovers or identity-based fraud. When potential risks are detected, the system responds dynamically—triggering alerts, placing temporary holds, or requiring extra verification steps such as multi-factor authentication.
+
+These safeguards are designed to strike a balance between security and user experience. By applying interventions proportionally to the level of detected risk, Shoplite ensures that genuine buyers and sellers can continue transacting smoothly without unnecessary disruptions. At the same time, fraudulent attempts are intercepted before they cause harm.
