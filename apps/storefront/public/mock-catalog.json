@@ -1,0 +1,30 @@
+[
+  { "id": "SKU001", "title": "Blue T-Shirt", "price": 19.99, "image": "/blue-shirt.jpg", "tags": ["clothing","tshirt","blue"], "stockQty": 12, "description":"Comfortable cotton tee" },
+  { "id": "SKU002", "title": "Red Hoodie", "price": 39.99, "image": "/red-hoodie.jpg", "tags": ["clothing","hoodie","red"], "stockQty": 6, "description":"Warm fleece hoodie" },
+  { "id": "SKU005", "title": "Denim Jeans", "price": 49.99, "image": "/jeans.jpg", "tags": ["clothing","jeans"], "stockQty": 5, "description":"Slim fit jeans" },
+  { "id": "SKU016", "title": "Graphic Tee", "price": 22.99, "image": "/Graphic-Tee.jpg", "tags": ["clothing","tshirt","graphic"], "stockQty": 16, "description":"Printed design tee" },
+
+  { "id": "SKU003", "title": "Sneaker X", "price": 79.99, "image": "/sneakers.jpg", "tags": ["shoes","sneaker"], "stockQty": 8, "description":"Lightweight sneaker" },
+
+  { "id": "SKU004", "title": "Baseball Cap", "price": 14.99, "image": "/baseballl-cap.jpg", "tags": ["accessories","cap"], "stockQty": 20, "description":"Adjustable cap" },
+  { "id": "SKU012", "title": "Sunglasses", "price": 34.99, "image": "/sunglasses.jpg", "tags": ["accessories","sunglasses"], "stockQty": 22, "description":"UV protection" },
+  { "id": "SKU022", "title": "Beanie", "price": 12.99, "image": "/beane.jpg", "tags": ["accessories","cap"], "stockQty": 15, "description":"Warm knit beanie" },
+
+  { "id": "SKU006", "title": "Wireless Earbuds", "price": 59.99, "image": "/wireless-earbuds.jpg", "tags": ["electronics","audio"], "stockQty": 15, "description":"Noise-isolating earbuds" },
+  { "id": "SKU018", "title": "Bluetooth Speaker", "price": 45.0, "image": "/speaker.jpg", "tags": ["electronics","audio","speaker"], "stockQty": 7, "description":"Portable speaker" },
+  { "id": "SKU015", "title": "Gaming Mouse", "price": 49.99, "image": "/gaming-mouse.jpg", "tags": ["electronics","gaming"], "stockQty": 11, "description":"High-DPI mouse" },
+
+  { "id": "SKU007", "title": "Coffee Mug", "price": 9.99, "image": "/coffee-mug.jpg", "tags": ["home","kitchen","mug"], "stockQty": 30, "description":"Ceramic mug" },
+  { "id": "SKU009", "title": "Desk Lamp", "price": 24.99, "image": "/desk-light.jpg", "tags": ["home","lighting"], "stockQty": 10, "description":"LED desk lamp" },
+  { "id": "SKU020", "title": "LED Strip", "price": 27.5, "image": "/led-light.jpg", "tags": ["home","lighting","led"], "stockQty": 13, "description":"Color changing strip" },
+
+  { "id": "SKU008", "title": "Notebook A5", "price": 7.99, "image": "/notebook.jpg", "tags": ["stationery","notebook"], "stockQty": 50, "description":"Ruled notebook" },
+  { "id": "SKU017", "title": "Cookbook", "price": 18.99, "image": "/cookbook.jpg", "tags": ["books","cooking"], "stockQty": 14, "description":"Easy recipes" },
+
+  { "id": "SKU010", "title": "Water Bottle", "price": 12.99, "image": "/water -bottle.jpg", "tags": ["outdoors","bottle"], "stockQty": 25, "description":"Insulated bottle" },
+  { "id": "SKU019", "title": "Travel Pillow", "price": 15.5, "image": "/travel-pillow.png", "tags": ["travel","comfort"], "stockQty": 21, "description":"Memory foam pillow" },
+
+  { "id": "SKU011", "title": "Yoga Mat", "price": 29.99, "image": "/yoga-mat.png", "tags": ["fitness","mat"], "stockQty": 18, "description":"Non-slip mat" },
+  { "id": "SKU021", "title": "gaming keyboard", "price": 89.99, "image": "/gaming-keyboard.jpg", "tags": ["electronics","gaming"], "stockQty": 2, "description":"mechanical keyboard 60% blue switches" }
+
+]
