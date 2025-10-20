@@ -43,3 +43,15 @@ export async function createProduct(data) {
   const product = new Product(data);
   return await product.save();
 }
+/**
+ * Get all products
+ */
+export async function getAllProducts() {
+  try {
+    const products = await Product.find();
+    return products;
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    throw error;
+  }
+}

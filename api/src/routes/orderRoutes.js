@@ -34,7 +34,10 @@ router.get("/:id/stream", async (req, res) => {
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();
 
-    console.log(`📡 Client connected to order stream for ${id}`);
+    // ✅ Increment global SSE counter
+    global.activeSSEConnections = (global.activeSSEConnections || 0) + 1;
+    console.log(`🟢 Client connected to order stream for ${id}`);
+    console.log(`🌐 Active SSE connections: ${global.activeSSEConnections}`);
 
     // Helper to send SSE events
     const sendEvent = (data) => {
@@ -75,10 +78,19 @@ router.get("/:id/stream", async (req, res) => {
         // Close the stream when delivered
         if (newStatus === "DELIVERED") {
           clearInterval(interval);
+          // ✅ Decrement global SSE counter
+          global.activeSSEConnections = Math.max(
+            0,
+            (global.activeSSEConnections || 1) - 1
+          );
+          console.log(`✅ Order ${id} delivered — stream closed`);
+          console.log(
+            `🌐 Active SSE connections: ${global.activeSSEConnections}`
+          );
+
           res.write("event: close\n");
           res.write("data: Stream closed - order delivered\n\n");
           res.end();
-          console.log(`✅ Order ${id} delivered — stream closed`);
         }
       }
     };
@@ -90,7 +102,13 @@ router.get("/:id/stream", async (req, res) => {
     // Handle client disconnect
     req.on("close", () => {
       clearInterval(interval);
+      // ✅ Decrement global counter on disconnect
+      global.activeSSEConnections = Math.max(
+        0,
+        (global.activeSSEConnections || 1) - 1
+      );
       console.log(`❌ Client disconnected from order stream for ${id}`);
+      console.log(`🌐 Active SSE connections: ${global.activeSSEConnections}`);
     });
   } catch (err) {
     console.error(err);

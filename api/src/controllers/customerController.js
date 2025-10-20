@@ -9,19 +9,21 @@ import {
 export async function getCustomerByEmail(req, res) {
   try {
     const { email } = req.query;
-    if (!email)
+    if (!email) {
       return res
         .status(400)
         .json({ message: "Email query parameter is required" });
+    }
 
     const customer = await findCustomerByEmail(email);
-    if (!customer)
+    if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
+    }
 
-    res.json(customer);
+    return res.status(200).json(customer);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error in getCustomerByEmail:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 }
 

@@ -13,6 +13,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from '@mui/material'
 
 export default function CatalogPage() {
@@ -20,11 +21,42 @@ export default function CatalogPage() {
   const [q, setQ] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null)
   const [tagFilter, setTagFilter] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
+  // ✅ Fetch all products from backend
   useEffect(() => {
-    listProducts().then(setItems)
+    listProducts()
+      .then(setItems)
+      .catch((err) => {
+        console.error('Error fetching products:', err)
+        setError('Failed to load products. Please try again later.')
+      })
+      .finally(() => setLoading(false))
   }, [])
 
+  // ✅ Show loader or error message
+  if (loading) {
+    return (
+      <PageTemplate title="🛍️ Product Catalog">
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+          <CircularProgress />
+        </Box>
+      </PageTemplate>
+    )
+  }
+
+  if (error) {
+    return (
+      <PageTemplate title="🛍️ Product Catalog">
+        <Typography color="error" textAlign="center" mt={4}>
+          {error}
+        </Typography>
+      </PageTemplate>
+    )
+  }
+
+  // ✅ Filtering
   let filtered = items.filter((it) => {
     if (q) {
       const tokens = q.toLowerCase().split(/\s+/).filter(Boolean)
@@ -35,6 +67,7 @@ export default function CatalogPage() {
     return true
   })
 
+  // ✅ Sorting
   if (sortOrder === 'asc') filtered.sort((a, b) => a.price - b.price)
   else if (sortOrder === 'desc') filtered.sort((a, b) => b.price - a.price)
 
@@ -53,7 +86,7 @@ export default function CatalogPage() {
           gap: 4,
         }}
       >
-        {/* Search Bar */}
+        {/* 🔍 Search Bar */}
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <TextField
             fullWidth
@@ -63,17 +96,13 @@ export default function CatalogPage() {
             onChange={(e) => setQ(e.target.value)}
           />
           {q && (
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => setQ('')}
-            >
+            <Button variant="outlined" color="error" onClick={() => setQ('')}>
               Clear
             </Button>
           )}
         </Box>
 
-        {/* Sorting & Filtering */}
+        {/* ⚙️ Sorting & Filtering */}
         <Box
           sx={{
             display: 'flex',
@@ -128,7 +157,7 @@ export default function CatalogPage() {
           </Box>
         </Box>
 
-        {/* Product Grid */}
+        {/* 🧱 Product Grid */}
         <ProductGrid items={filtered} onAdd={(id) => addToCart(id)} />
       </Box>
     </PageTemplate>

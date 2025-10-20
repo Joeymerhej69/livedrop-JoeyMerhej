@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { getCart, subscribe, clearCart } from '../lib/store'
-import { listProducts, placeOrder, getOrderStatus } from '../lib/api'
+import {
+  listProducts,
+  placeOrderForCustomer,
+} from '../lib/api'
 import CheckoutSummary from '../components/molecules/CheckoutSummary'
 import PageTemplate from '../components/templates/PageTemplate'
-
 import {
   Box,
   Button,
@@ -24,34 +26,72 @@ export default function CheckoutPage() {
   const [purchasedLines, setPurchasedLines] = useState<Line[]>([])
   const [orderStatus, setOrderStatus] = useState<any>(null)
 
+  // Get logged-in user
+  const customerId = localStorage.getItem('customerId')
+
   useEffect(() => subscribe(setLines), [])
+  useEffect(() => { listProducts().then(setProducts) }, [])
 
-  useEffect(() => {
-    listProducts().then(setProducts)
-  }, [])
-
+  // ✅ Real-time order status via SSE
   useEffect(() => {
     if (!placedOrderId) return
-    const interval = setInterval(async () => {
-      const status = await getOrderStatus(placedOrderId)
-      setOrderStatus(status)
-    }, 1000)
-    return () => clearInterval(interval)
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    const eventSource = new EventSource(`${API_BASE}/orders/${placedOrderId}/stream`)
+
+    console.log(`📡 Connected to live order stream for ${placedOrderId}`)
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        console.log('🟢 Order update:', data)
+        setOrderStatus(data)
+      } catch (err) {
+        console.error('Error parsing SSE data:', err)
+      }
+    }
+
+    eventSource.onerror = () => {
+      console.log('ℹ️ SSE connection closed (normal after delivery)')
+      eventSource.close()
+    }
+
+    return () => {
+      console.log('🔌 Closing SSE connection')
+      eventSource.close()
+    }
   }, [placedOrderId])
 
+  // ✅ Place order logic
   async function onPlace() {
     if (lines.length === 0) return
+    if (!customerId) {
+      alert('You must log in before placing an order.')
+      window.location.hash = '#/login'
+      return
+    }
+
     setPlacing(true)
-    setPurchasedLines(lines)
-    const res = await placeOrder(lines)
-    setPlacedOrderId(res.orderId)
-    clearCart()
-    await listProducts().then(setProducts)
-    setPlacing(false)
+    try {
+      console.log('✅ Creating order for customer:', customerId)
+
+      const order = await placeOrderForCustomer(customerId, lines, products)
+      console.log('🛒 Order saved:', order)
+
+      setPurchasedLines(lines)
+      setPlacedOrderId(order._id || order.orderId)
+      clearCart()
+      await listProducts().then(setProducts)
+    } catch (err) {
+      console.error('Error placing order:', err)
+      alert('Something went wrong while placing your order.')
+    } finally {
+      setPlacing(false)
+    }
   }
 
-  const steps = ['Placed', 'Packed', 'Shipped', 'Delivered']
-  const currentStep = orderStatus ? steps.indexOf(orderStatus.status) + 1 : 0
+  // ✅ Stepper logic
+  const steps = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED']
+  const currentStep = orderStatus ? steps.indexOf(orderStatus.status) : -1
 
   return (
     <PageTemplate title="Checkout">
@@ -61,13 +101,21 @@ export default function CheckoutPage() {
         <Box sx={{ mt: 5 }}>
           <CheckoutSummary lines={purchasedLines} products={products} />
 
-          {/* 🌟 MUI Stepper */}
+          {/* 🌟 Stepper with green active circles */}
           <Box sx={{ mt: 5, width: '100%', maxWidth: 600, mx: 'auto' }}>
             <Typography variant="h6" align="center" gutterBottom>
               Order {placedOrderId} Progress
             </Typography>
 
-            <Stepper activeStep={currentStep - 1} alternativeLabel>
+            <Stepper
+              activeStep={currentStep}
+              alternativeLabel
+              sx={{
+                '& .MuiStepIcon-root': { color: '#ccc' },
+                '& .MuiStepIcon-root.Mui-active': { color: '#2196f3' },
+                '& .MuiStepIcon-root.Mui-completed': { color: 'green' },
+              }}
+            >
               {steps.map((label) => (
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
@@ -81,10 +129,17 @@ export default function CheckoutPage() {
                   <Typography>
                     Status: <strong>{orderStatus.status}</strong>
                   </Typography>
-                  {['Shipped', 'Delivered'].includes(orderStatus.status) && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                      Carrier: {orderStatus.carrier} <br />
-                      ETA: {orderStatus.eta}
+                  {['SHIPPED', 'DELIVERED'].includes(orderStatus.status) && (
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 1 }}
+                    >
+                      Carrier: {orderStatus.carrier || 'AcmeShip'} <br />
+                      ETA:{' '}
+                      {orderStatus.eta
+                        ? new Date(orderStatus.eta).toLocaleDateString()
+                        : '—'}
                     </Typography>
                   )}
                 </>
@@ -96,6 +151,7 @@ export default function CheckoutPage() {
         </Box>
       )}
 
+      {/* 🛒 Place Order Button */}
       {!placedOrderId && (
         <Box sx={{ mt: 5, textAlign: 'center' }}>
           <Button
@@ -105,7 +161,7 @@ export default function CheckoutPage() {
             disabled={placing || lines.length === 0}
             size="large"
           >
-            {placing ? 'Placing...' : 'Place Order'}
+            {placing ? 'Placing Order...' : 'Place Order'}
           </Button>
         </Box>
       )}

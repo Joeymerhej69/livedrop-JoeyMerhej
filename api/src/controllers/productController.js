@@ -2,6 +2,7 @@ import {
   getProducts,
   getProductById,
   createProduct,
+  getAllProducts,
 } from "../services/productService.js";
 
 /**
@@ -43,5 +44,17 @@ export async function addProduct(req, res) {
   } catch (err) {
     console.error(err);
     res.status(400).json({ message: err.message });
+  }
+}
+/**
+ * Controller: Get all products
+ */
+export async function fetchAllProducts(req, res) {
+  try {
+    const products = await getAllProducts();
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Failed to fetch products" });
   }
 }

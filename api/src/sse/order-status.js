@@ -4,7 +4,7 @@ export default function registerOrderStatusSSE(app) {
   // Store all connected clients
   const clients = new Set();
 
-  // SSE endpoint
+  // SSE endpoint for order status updates
   app.get("/sse/order-status", (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -13,12 +13,24 @@ export default function registerOrderStatusSSE(app) {
 
     // Add client
     clients.add(res);
+
+    // ✅ Increment global connection counter
+    global.activeSSEConnections = (global.activeSSEConnections || 0) + 1;
     console.log(`🟢 Client connected (${clients.size} total)`);
+    console.log(`🌐 Global SSE count: ${global.activeSSEConnections}`);
 
     // Handle disconnects
     req.on("close", () => {
       clients.delete(res);
+
+      // ✅ Decrement global counter
+      global.activeSSEConnections = Math.max(
+        0,
+        (global.activeSSEConnections || 1) - 1
+      );
+
       console.log(`🔴 Client disconnected (${clients.size} remaining)`);
+      console.log(`🌐 Global SSE count: ${global.activeSSEConnections}`);
     });
   });
 

@@ -16,18 +16,31 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error(err));
-
-// Test route
-app.get("/", (req, res) => res.send("API Running 🚀"));
-// Global SSE connection counter
+// --- ✅ PERFORMANCE METRICS SETUP ---
+let totalLatency = 0;
+let requestCount = 0;
 global.activeSSEConnections = 0;
 
-// Example SSE endpoint
+// Middleware to measure API latency
+app.use((req, res, next) => {
+  const start = process.hrtime();
+
+  res.on("finish", () => {
+    const diff = process.hrtime(start);
+    const latency = diff[0] * 1000 + diff[1] / 1e6; // ms
+    totalLatency += latency;
+    requestCount++;
+  });
+
+  next();
+});
+
+// Exported function so dashboard can access it
+export function getAverageLatency() {
+  return requestCount ? totalLatency / requestCount : 0;
+}
+
+// --- ✅ OPTIONAL: Test SSE connections (demo endpoint) ---
 app.get("/events", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -36,38 +49,36 @@ app.get("/events", (req, res) => {
   global.activeSSEConnections++;
   console.log("🔌 SSE Client connected:", global.activeSSEConnections);
 
+  const interval = setInterval(() => {
+    res.write(
+      `data: ${JSON.stringify({ time: new Date().toISOString() })}\n\n`
+    );
+  }, 3000);
+
   req.on("close", () => {
+    clearInterval(interval);
     global.activeSSEConnections--;
     console.log("❌ SSE Client disconnected:", global.activeSSEConnections);
   });
 });
 
-app.use((req, res, next) => {
-  const start = process.hrtime();
-  res.on("finish", () => {
-    const diff = process.hrtime(start);
-    const latency = diff[0] * 1000 + diff[1] / 1e6; // ms
-    totalLatency += latency;
-    requestCount++;
-  });
-  next();
-});
+// --- ✅ DATABASE CONNECTION ---
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error(err));
 
-// Use Customer routes
+// --- ✅ ROUTES ---
+app.get("/", (req, res) => res.send("API Running 🚀"));
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+
+// SSE stream for order updates
 registerOrderStatusSSE(app);
 
-let totalLatency = 0;
-let requestCount = 0;
-
-export function getAverageLatency() {
-  return requestCount ? totalLatency / requestCount : 0;
-}
-
-// Start server
+// --- ✅ SERVER START ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
