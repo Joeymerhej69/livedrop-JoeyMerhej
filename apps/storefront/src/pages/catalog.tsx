@@ -3,7 +3,6 @@ import { listProducts } from '../lib/api'
 import { addToCart } from '../lib/store'
 import ProductGrid from '../components/molecules/ProductGrid'
 import PageTemplate from '../components/templates/PageTemplate'
-
 import {
   Box,
   TextField,
@@ -34,6 +33,13 @@ export default function CatalogPage() {
       })
       .finally(() => setLoading(false))
   }, [])
+
+  // ✅ Logout function
+  function handleLogout() {
+    localStorage.removeItem('customerId')
+    localStorage.removeItem('customerEmail')
+    window.location.hash = '#/login'
+  }
 
   // ✅ Show loader or error message
   if (loading) {
@@ -75,6 +81,28 @@ export default function CatalogPage() {
 
   return (
     <PageTemplate title="🛍️ Product Catalog">
+      {/* 🧭 Top Bar with Logout Button */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold">
+          Welcome back 👋
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </Box>
+
       <Box
         sx={{
           bgcolor: 'background.paper',
