@@ -1,0 +1,7 @@
+transformers
+torch
+sentence-transformers
+faiss-cpu
+flask
+pyngrok
+numpy
