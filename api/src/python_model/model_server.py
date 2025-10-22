@@ -1,22 +1,21 @@
 import os
 import time
-import numpy as np
 from threading import Thread
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
+
+import numpy as np
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from sentence_transformers import SentenceTransformer
+import faiss
 
 # === load env ===
 load_dotenv()
 PORT = int(os.getenv("PORT", "5050"))
 NGROK_TOKEN = os.getenv("NGROK_AUTHTOKEN")
 
-# ===============================
-# 1) IMPORTS FOR MODEL + RETRIEVAL
-# ===============================
-import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-from sentence_transformers import SentenceTransformer
-import faiss
+
 
 # Cell 3: Knowledge base data (manual definition)
 
@@ -324,24 +323,27 @@ print("Available prompts:", list(PROMPTS.keys()))
 
 print(f"Loaded {len(KNOWLEDGE_BASE)} KB docs (manually defined)")
 # ===============================
-# 3) LOAD LLM (FLAN-T5 Large)
+# 3) LOAD MODEL (DistilGPT2)
 # ===============================
-print("Loading FLAN-T5 Small…")
-model_name = "distilgpt2"  # smaller & faster than DialoGPT
+print("Loading DistilGPT2 small model for chatting…")
+model_name = "distilgpt2"  # ✅ light and CPU-friendly
+
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(
+model = AutoModelForCausalLM.from_pretrained(
     model_name,
-    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-    device_map="auto" if torch.cuda.is_available() else None
+    torch_dtype=torch.float32,  # use float32 for CPU
 )
 
+# Use text-generation pipeline instead of seq2seq
 llm_pipeline = pipeline(
-    "text2text-generation",
+    "text-generation",
     model=model,
     tokenizer=tokenizer,
-    max_new_tokens=512
+    max_new_tokens=128,
+    temperature=0.7,
 )
-print("✅ FLAN-T5 loaded")
+
+print("✅ DistilGPT2 loaded successfully")
 
 # ===============================
 # 4) EMBEDDINGS + FAISS
@@ -385,7 +387,7 @@ def generate_response(query, prompt_type=None):
     retrieved, best_dist = retrieve_docs(query)
     prompt = build_prompt(query, prompt_type, retrieved)
 
-    out = llm_pipeline(prompt, max_new_tokens=300)[0]["generated_text"]
+    out = llm_pipeline(prompt, max_new_tokens=150)[0]["generated_text"]
 
     if best_dist < 0.5:
         confidence = "high"
@@ -422,7 +424,7 @@ def health():
     return jsonify({"status": "ok", "docs_loaded": len(KNOWLEDGE_BASE)})
 
 # ===============================
-# 6) START SERVER + NGROK
+# 6) START SERVER + NGROK (local)
 # ===============================
 def run_flask():
     app.run(host="0.0.0.0", port=PORT, use_reloader=False)
@@ -433,21 +435,22 @@ def main():
     t.start()
     time.sleep(1.5)
 
-    # start ngrok
-    from pyngrok import ngrok, conf
-    if NGROK_TOKEN:
-        conf.get_default().auth_token = NGROK_TOKEN
-    public_url = ngrok.connect(PORT).public_url
-    print(f"✅ Public URL: {public_url}")
-    print("Health:", public_url + "/health")
+    # optional ngrok (local debugging only)
+    try:
+        from pyngrok import ngrok, conf
+        if NGROK_TOKEN:
+            conf.get_default().auth_token = NGROK_TOKEN
+        public_url = ngrok.connect(PORT).public_url
+        print(f"✅ Public URL: {public_url}")
+        print("Health:", public_url + "/health")
+    except Exception as e:
+        print(f"(Ngrok disabled or failed: {e})")
 
-    # keep process alive
+    # keep alive
     try:
         while True:
             time.sleep(3600)
     except KeyboardInterrupt:
         print("Shutting down…")
-        ngrok.kill()
-
 if __name__ == "__main__":
     main()
