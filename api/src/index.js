@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-
+import { runAssistant } from "./assistant/engine.js";
 // Import routes
 import customerRoutes from "./routes/customerRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -75,7 +75,17 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.post("/api/assistant/ask", async (req, res) => {
+  try {
+    const { query } = req.body;
+    if (!query) return res.status(400).json({ message: "Missing query" });
+    const response = await runAssistant(query);
+    res.json(response);
+  } catch (err) {
+    console.error("Assistant error:", err);
+    res.status(500).json({ message: "Assistant failed" });
+  }
+});
 // SSE stream for order updates
 registerOrderStatusSSE(app);
 

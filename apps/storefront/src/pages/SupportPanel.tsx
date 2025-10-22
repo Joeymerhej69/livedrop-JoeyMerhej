@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { answerQuestion } from '../assistant/engine'
+import { askAssistant } from '../assistant/engine'
 import {
   Dialog,
   DialogTitle,
@@ -17,9 +17,17 @@ interface SupportPanelProps {
   onClose?: () => void
 }
 
+interface AssistantResponse {
+  text: string
+  intent?: string
+  citations?: string[]
+  functionsCalled?: any[]
+  assistant?: string
+}
+
 export default function SupportPanel({ onClose }: SupportPanelProps) {
   const [q, setQ] = useState('')
-  const [resp, setResp] = useState<{ text: string | null; citation: string | null } | null>(null)
+  const [resp, setResp] = useState<AssistantResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -31,9 +39,15 @@ export default function SupportPanel({ onClose }: SupportPanelProps) {
     e?.preventDefault()
     if (!q.trim()) return
     setLoading(true)
-    const r = await answerQuestion(q)
-    setResp(r as any)
-    setLoading(false)
+
+    try {
+      const r = await askAssistant(q)
+      setResp(r)
+    } catch (err) {
+      setResp({ text: '⚠️ Something went wrong. Please try again later.' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -41,13 +55,31 @@ export default function SupportPanel({ onClose }: SupportPanelProps) {
       open
       onClose={onClose}
       PaperProps={{
-        sx: { position: 'fixed', right: 12, bottom: 12, width: 360, maxWidth: '90vw', borderRadius: 2 },
+        sx: {
+          position: 'fixed',
+          right: 12,
+          bottom: 12,
+          width: 380,
+          maxWidth: '90vw',
+          borderRadius: 2,
+          boxShadow: 6,
+        },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        Ask Support
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          bgcolor: 'primary.main',
+          color: 'white',
+          py: 1,
+          px: 2,
+        }}
+      >
+        {resp?.assistant || 'Aria — Support Assistant'}
         {onClose && (
-          <IconButton onClick={onClose} size="small">
+          <IconButton onClick={onClose} size="small" sx={{ color: 'white' }}>
             <CloseIcon />
           </IconButton>
         )}
@@ -57,7 +89,7 @@ export default function SupportPanel({ onClose }: SupportPanelProps) {
         <form onSubmit={onSubmit}>
           <TextField
             id="support-q"
-            label="Question"
+            label="Ask a question..."
             fullWidth
             inputRef={inputRef}
             value={q}
@@ -72,14 +104,42 @@ export default function SupportPanel({ onClose }: SupportPanelProps) {
           </Box>
         </form>
 
-        {resp && (
-          <Box mt={2}>
-            <Typography variant="body1" component="pre" sx={{ whiteSpace: 'pre-wrap' }}>
+        {/* Assistant reply */}
+        {resp && !loading && (
+          <Box mt={3}>
+            <Typography
+              variant="body1"
+              component="pre"
+              sx={{
+                whiteSpace: 'pre-wrap',
+                backgroundColor: '#f8f8f8',
+                borderRadius: 1,
+                p: 2,
+                border: '1px solid #eee',
+              }}
+            >
               {resp.text}
             </Typography>
-            {resp.citation && (
-              <Typography variant="caption" color="text.secondary">
-                [{resp.citation}]
+
+            {/* Intent info */}
+            {resp.intent && (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', mt: 1 }}
+              >
+                intent: <strong>{resp.intent}</strong>
+              </Typography>
+            )}
+
+            {/* Citations */}
+            {resp.citations && resp.citations.length > 0 && (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'block', mt: 0.5 }}
+              >
+                cited: [{resp.citations.join(', ')}]
               </Typography>
             )}
           </Box>

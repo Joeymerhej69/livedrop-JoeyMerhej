@@ -1,0 +1,212 @@
+[
+  {
+    "id": "Policy1.1",
+    "question": "What is your return policy?",
+    "answer": "Items can be returned within 30 days of purchase with the original receipt. Returned items must be unused and in original packaging. Refunds are processed within 5-7 business days.",
+    "category": "returns",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy1.2",
+    "question": "Do you offer free returns?",
+    "answer": "Yes, ShopLite offers free returns on most domestic orders within the 30-day return window. Some clearance or final-sale items may not qualify.",
+    "category": "returns",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy1.3",
+    "question": "How do I start a return?",
+    "answer": "You can initiate a return from your ShopLite account under 'My Orders' by selecting the item and clicking 'Request Return'. You'll receive a prepaid return label via email.",
+    "category": "returns",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy1.4",
+    "question": "When will I receive my refund?",
+    "answer": "Refunds are issued within 5–7 business days after we receive and inspect the returned item. You'll get a confirmation email when the refund is processed.",
+    "category": "returns",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy2.1",
+    "question": "What are your shipping options?",
+    "answer": "We offer Standard (5–7 days, $5.99), Express (2–3 days, $12.99), and Overnight ($24.99) shipping. Orders over $50 qualify for free Standard shipping.",
+    "category": "shipping",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy2.2",
+    "question": "Do you ship internationally?",
+    "answer": "Yes, ShopLite ships to over 40 countries. International shipping times vary between 7–21 days depending on destination and customs clearance.",
+    "category": "shipping",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy2.3",
+    "question": "How can I track my order?",
+    "answer": "After your order ships, you'll receive a tracking link via email. You can also view live tracking updates from your account dashboard under 'My Orders'.",
+    "category": "shipping",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy2.4",
+    "question": "Do you offer same-day delivery?",
+    "answer": "Same-day delivery is available in select cities for eligible items ordered before 12 PM local time. A $9.99 service fee applies.",
+    "category": "shipping",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy3.1",
+    "question": "Do you provide product warranties?",
+    "answer": "All electronics include a 1-year limited warranty covering manufacturing defects. Extended warranties can be purchased during checkout.",
+    "category": "warranty",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy3.2",
+    "question": "How do I claim a warranty?",
+    "answer": "To claim a warranty, contact our support team with your order ID and product serial number. We'll guide you through the replacement or repair process.",
+    "category": "warranty",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy4.1",
+    "question": "What payment methods do you accept?",
+    "answer": "We accept Visa, MasterCard, American Express, PayPal, Apple Pay, and Google Pay. Payments are processed securely using SSL encryption.",
+    "category": "payments",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy4.2",
+    "question": "Can I use multiple payment methods for one order?",
+    "answer": "No, each order can only be paid using one payment method. You can, however, use gift cards in combination with another payment option.",
+    "category": "payments",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy4.3",
+    "question": "Do you charge sales tax?",
+    "answer": "Yes, sales tax is applied according to your local state and country regulations at checkout.",
+    "category": "payments",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy5.1",
+    "question": "What is your privacy policy?",
+    "answer": "We respect your privacy and only collect data necessary to process orders and improve services. Your information is never sold to third parties.",
+    "category": "privacy",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy5.2",
+    "question": "Do you store my credit card information?",
+    "answer": "No, ShopLite does not store credit card details. All transactions are handled by certified third-party payment processors.",
+    "category": "privacy",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy5.3",
+    "question": "Can I delete my account data?",
+    "answer": "Yes, you can request data deletion from your account settings under 'Privacy Options'. Once deleted, this data cannot be recovered.",
+    "category": "privacy",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy6.1",
+    "question": "What if my item arrives damaged?",
+    "answer": "If your order arrives damaged, contact support within 7 days of delivery with photos. We'll offer a free replacement or full refund.",
+    "category": "returns",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy7.1",
+    "question": "How can I cancel an order?",
+    "answer": "Orders can be canceled within 2 hours of placement. Once an order is shipped, cancellations are not possible.",
+    "category": "orders",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy7.2",
+    "question": "Can I modify my order after placing it?",
+    "answer": "You can modify shipping address or item quantities within 1 hour of placing an order through your account dashboard.",
+    "category": "orders",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy7.3",
+    "question": "Why was my order cancelled automatically?",
+    "answer": "Orders may be auto-cancelled if payment authorization fails or the item goes out of stock before processing.",
+    "category": "orders",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy8.1",
+    "question": "What security measures do you use?",
+    "answer": "ShopLite uses 256-bit SSL encryption, two-factor authentication, and daily vulnerability scans to keep your data secure.",
+    "category": "security",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy9.1",
+    "question": "Do you offer customer support on weekends?",
+    "answer": "Yes, our support team is available seven days a week from 9am to 8pm EST via chat and email.",
+    "category": "support",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy9.2",
+    "question": "How can I contact support?",
+    "answer": "You can reach us via live chat, email (support@shoplite.com), or by phone at +1 (800) 555-9090.",
+    "category": "support",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy10.1",
+    "question": "Do you have a loyalty or rewards program?",
+    "answer": "Yes! Join ShopLite Rewards to earn points for every purchase. Points can be redeemed for discounts on future orders.",
+    "category": "rewards",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy10.2",
+    "question": "Can I use multiple promo codes?",
+    "answer": "Only one promotional code can be applied per order. However, promo codes can be combined with reward points.",
+    "category": "rewards",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy11.1",
+    "question": "Do you offer gift cards?",
+    "answer": "Yes, digital gift cards are available in amounts from $10 to $250. They can be emailed directly to recipients.",
+    "category": "payments",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy12.1",
+    "question": "Do you price match competitors?",
+    "answer": "Yes, we price match authorized online retailers within 7 days of purchase for identical products in stock.",
+    "category": "pricing",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy13.1",
+    "question": "What should I do if I receive the wrong item?",
+    "answer": "Contact support within 7 days of delivery. We’ll provide a prepaid label to return the item and send the correct one immediately.",
+    "category": "orders",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy14.1",
+    "question": "Can I change my shipping address after checkout?",
+    "answer": "You can update your shipping address within 30 minutes of placing the order from your account page.",
+    "category": "shipping",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "Policy15.1",
+    "question": "Do you have physical stores?",
+    "answer": "ShopLite currently operates online only, but we partner with select pop-up stores during the holiday season.",
+    "category": "general",
+    "lastUpdated": "2025-10-01T00:00:00Z"
+  }
+]
