@@ -5,3 +5,4 @@ faiss-cpu
 flask
 pyngrok
 numpy
+python-dotenv
