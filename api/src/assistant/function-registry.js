@@ -47,10 +47,23 @@ export function setupFunctionRegistry() {
 
   // ✅ 3. Get Customer Orders
   reg.register("getCustomerOrders", async ({ email }) => {
-    const customer = await Customer.findOne({ email });
+    const customer = await Customer.findOne({ email }).lean();
     if (!customer) return { found: false, orders: [] };
-    const orders = await Order.find({ customerId: customer._id });
-    return { found: true, orders };
+
+    const orders = await Order.find({ customerId: customer._id })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    // return only what the assistant needs to format responses
+    const slim = orders.map((o) => ({
+      _id: o._id,
+      status: o.status,
+      total: o.total,
+      createdAt: o.createdAt,
+    }));
+
+    return { found: true, orders: slim };
   });
 
   return reg;

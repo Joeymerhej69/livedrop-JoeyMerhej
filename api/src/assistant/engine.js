@@ -197,22 +197,57 @@ export async function runAssistant(query) {
 
   // 🚚 2. Order Status
   else if (intent === "order_status") {
+    const emailMatch = query.match(
+      /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i
+    );
     const idMatch = query.match(/([a-f0-9]{10,})/i);
+
+    // If an explicit order id is present, prefer that first
     if (idMatch) {
       const orderId = idMatch[1];
       const result = await registry.execute("getOrderStatus", { orderId });
       functionsCalled.push({ name: "getOrderStatus" });
 
-      if (!result.found) {
+      if (!result?.found) {
         text = `❌ No order found with ID ${orderId}.`;
       } else {
-        text = `📦 Order ${orderId} is currently **${result.status.toUpperCase()}**.`;
+        text = `📦 Order ${orderId} is currently **${(
+          result.status || ""
+        ).toUpperCase()}**.`;
         if (result.carrier) text += ` Carrier: ${result.carrier}.`;
         if (result.eta)
           text += ` ETA: ${new Date(result.eta).toLocaleDateString()}.`;
       }
-    } else {
-      text = "Please provide your order ID so I can check it for you.";
+    }
+
+    // Otherwise if an email is present, list recent orders for that customer
+    else if (emailMatch) {
+      const email = emailMatch[0];
+      const result = await registry.execute("getCustomerOrders", { email });
+      functionsCalled.push({ name: "getCustomerOrders" });
+
+      if (!result?.found || !result.orders?.length) {
+        text = `No orders found for **${email}**.`;
+      } else {
+        const lines = result.orders.slice(0, 5).map((o) => {
+          const created = o.createdAt
+            ? ` — ${new Date(o.createdAt).toLocaleDateString()}`
+            : "";
+          const total =
+            o.total != null ? ` — $${Number(o.total).toFixed(2)}` : "";
+          const status = (o.status || "").toUpperCase();
+          return `• ${o._id} — ${status}${total}${created}`;
+        });
+
+        text =
+          `Here are your recent orders for **${email}**:\n` + lines.join("\n");
+      }
+    }
+
+    // If neither was provided, ask for one
+    else {
+      text =
+        "Please provide your order ID or your email so I can check your orders.";
     }
   }
 
