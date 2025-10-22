@@ -326,8 +326,8 @@ print(f"Loaded {len(KNOWLEDGE_BASE)} KB docs (manually defined)")
 # ===============================
 # 3) LOAD LLM (FLAN-T5 Large)
 # ===============================
-print("Loading FLAN-T5 Large…")
-model_name = "google/flan-t5-large"
+print("Loading FLAN-T5 small")
+model_name = "google/flan-t5-small"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(
     model_name,
