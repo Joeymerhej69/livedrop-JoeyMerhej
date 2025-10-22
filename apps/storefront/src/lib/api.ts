@@ -113,7 +113,6 @@ export async function getProduct(id: string): Promise<Product | null> {
 /**
  * Place order (mocked locally for now)
  */
-let orders: Record<string, Order> = {};
 
 
 export async function getOrderStatus(id: string) {
