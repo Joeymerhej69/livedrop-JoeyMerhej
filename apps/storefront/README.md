@@ -16,7 +16,7 @@ export default defineConfig([
     npm install
     npm install @mui/material @emotion/react @emotion/styled
     npm install @mui/icons-material  (used mui because tailwind was not working properly)
-
+    npm install recharts
 
     2) dev
 
