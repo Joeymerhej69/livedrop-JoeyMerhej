@@ -12,11 +12,11 @@ jack.anderson@example.com
 for backend instalations check the readme file in /api folder
 for frontend instalation check the readme file in apps/storefront
 
-render link for backend : https://livedrop-joeymerhej.onrender.com/
+render link for backend : https://livedrop-joeymerhej.onren`der.com
 versel link for frontend:https://livedrop-joey-merhej.vercel.app/
 note (use /admin to open the admin page)
 
-to test some of the policies check the questions in /docs/ground-truth.json
+to test some of the policies of the LLM check the questions in /docs/ground-truth.json
 
 # 📘 System Design – README
 
