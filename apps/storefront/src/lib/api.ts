@@ -115,12 +115,6 @@ export async function getProduct(id: string): Promise<Product | null> {
  */
 let orders: Record<string, Order> = {};
 
-function makeOrderId() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let id = '';
-  for (let i = 0; i < 10; i++) id += chars[Math.floor(Math.random() * chars.length)];
-  return id;
-}
 
 // export function placeOrder(_cart: { id: string; qty: number }[]): Promise<{ orderId: string }> {
 //   const orderId = makeOrderId();
