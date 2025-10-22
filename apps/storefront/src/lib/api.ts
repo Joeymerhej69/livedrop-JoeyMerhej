@@ -116,34 +116,23 @@ export async function getProduct(id: string): Promise<Product | null> {
 let orders: Record<string, Order> = {};
 
 
-// export function placeOrder(_cart: { id: string; qty: number }[]): Promise<{ orderId: string }> {
-//   const orderId = makeOrderId();
-//   const placed: Order = { orderId, status: 'Placed' };
-//   orders[orderId] = placed;
+export async function getOrderStatus(id: string) {
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-//   setTimeout(() => (orders[orderId].status = 'Packed'), 5000);
-//   setTimeout(() => {
-//     orders[orderId].status = 'Shipped';
-//     orders[orderId].carrier = 'AcmeShip';
-//     const eta = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-//     orders[orderId].eta = eta.toISOString().slice(0, 10);
-//   }, 10000);
-//   setTimeout(() => (orders[orderId].status = 'Delivered'), 15000);
+  try {
+    const res = await fetch(`${API_BASE}/orders/${id}`);
+    if (!res.ok) return null;
 
-//   return Promise.resolve({ orderId });
-// }
+    const data = await res.json();
 
-/**
- * Get order status (mocked)
- */
-export function getOrderStatus(orderId: string): Promise<Order | null> {
-  return new Promise((resolve) =>
-    setTimeout(() => {
-      const order = orders[orderId];
-      resolve(order ? { ...order } : null);
-    }, 120)
-  );
+    // ✅ Only return the status (even if the backend returns more)
+    return { status: data.status || "Unknown" };
+  } catch (err) {
+    console.error("Error fetching order:", err);
+    return null;
+  }
 }
+
 
 /**
  * Check if a customer exists by email

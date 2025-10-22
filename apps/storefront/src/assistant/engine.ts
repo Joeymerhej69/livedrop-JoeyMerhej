@@ -21,54 +21,54 @@ function scoreQuery(q: string, qa: QA) {
 }
 
 export async function answerQuestion(input: string) {
-  // detect order id
-  const idMatch = input.match(/([A-Z0-9]{10,})/i)
+  // 🔍 Detect order ID (Mongo-style alphanumeric, 10+ chars)
+  const idMatch = input.match(/([a-f0-9]{10,})/i)
   let orderPart: string | null = null
-  let orderStatus = null
+  let orderStatus: any = null
 
   if (idMatch) {
-    const id = idMatch[1].toUpperCase()
+    const id = idMatch[1]
     orderPart = id
     orderStatus = await getOrderStatus(id)
-    if (!orderStatus) {
+
+    // If not found or invalid
+    if (!orderStatus || !orderStatus.status) {
       return {
-        text: `Sorry — there is no order with ID ${last4(orderPart)}.`,
+        text: `❌ Sorry — no order found with ID ${last4(orderPart)}.`,
         citation: null,
       }
     }
   }
 
-  // score QAs
+  // 💡 Score Q&A pairs from ground-truth.json
   const qas: QA[] = ground as QA[]
   const scored = qas.map((qa) => ({ qa, score: scoreQuery(input, qa) }))
   scored.sort((a, b) => b.score - a.score)
 
   const best = scored[0]
-
-  // If no QA matches confidently, refuse
   const confidence = best ? best.score / Math.max(1, tokenize(input).length) : 0
+
+  // 🧠 If confidence is low (not a known FAQ)
   if (confidence < 0.3) {
-    // If order id present, respond with order status only (no citation)
+    // ✅ If user asked for order ID, reply only with status
     if (orderPart && orderStatus) {
       return {
-        text: `Order ${last4(orderPart)} is currently ${orderStatus.status}. ${
-          orderStatus.carrier ? `Carrier: ${orderStatus.carrier}. ETA: ${orderStatus.eta}.` : ''
-        }`,
+        text: `📦 Order ${last4(orderPart)} is currently **${orderStatus.status.toUpperCase()}**.`,
         citation: null,
       }
     }
 
-    // Refuse to answer unrelated questions
+    // ❓ Otherwise, default fallback
     return {
       text: "I'm sorry — I can't answer that from our Q&A. Please contact support.",
       citation: null,
     }
   }
 
-  // prepare answer, include order status if present
+  // 🧾 If we have a relevant FAQ answer
   let answerText = best.qa.answer
   if (orderPart && orderStatus) {
-    answerText += `\n\nOrder ${last4(orderPart)} status: ${orderStatus.status}.`
+    answerText += `\n\n📦 Order ${last4(orderPart)} status: **${orderStatus.status.toUpperCase()}**.`
   }
 
   return { text: answerText, citation: best.qa.qid }
